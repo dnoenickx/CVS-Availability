@@ -1,1 +1,1 @@
-# CVS-Avilability
+# CVS-Availability
