@@ -1,7 +1,2 @@
-update.command
-__pycache__/cvs.cpython-36.pyc
-__pycache__/states.cpython-36.pyc
-out.log
-error.log
-com.cvs.updater.plist
 .DS_Store
+__pycache__

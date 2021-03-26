@@ -32,7 +32,7 @@ def time_string():
     return f"{datetime.utcnow():%Y-%m-%d %H:%M} UTC"
 
 
-def fetch_data(state, verbose=False):
+def fetch_data(state, verbose):
     """Fetches, from CVS website, vaccine appointment availability for the 
        given state. Returns data in a pandas dataframe. Can optionally print
        out the names of the locations with availability. """
@@ -46,13 +46,14 @@ def fetch_data(state, verbose=False):
             city = site['city'].title()
             status = site['status'] == 'Available'
             new_data.append([city, status])
-            if verbose and status:
-                print(f"  • {city}")
+            if status:
                 avail_count += 1
+                if verbose:
+                    print(f"  • {city}")
         if avail_count == 0:
             print('    (None)')
         elif not verbose:
-            print('    {avail_count} sites with availability!')
+            print(f'    {avail_count} sites with availability!')
     df = pd.DataFrame(new_data, columns=['City', time_string()])
     df.set_index('City', inplace=True)
     return df
@@ -69,7 +70,7 @@ def load_data(state):
     return data
 
 
-def update(state, verbose=False):
+def update(state, verbose):
     """ Fetches and appends new data to the given states csv. """
     print(state.title())
     try:
@@ -77,21 +78,21 @@ def update(state, verbose=False):
     except KeyError:
         return
     old_data = load_data(state)
-    new_data = fetch_data(state, verbose=verbose)
+    new_data = fetch_data(state, verbose)
     
     merged_data = old_data.merge(new_data, how='outer', 
                                  left_index=True, right_index=True)
     merged_data.to_csv(filename(state), index_label='City')
 
 
-def update_all(delay):
+def update_all(delay, verbose=False):
     """ Updates csv for every state listed in SUPPORTED_STATES. """
     for state in SUPPORTED_STATES:
         sleep(delay)
-        update(state, verbose=True)
+        update(state, verbose)
 
 
 while True:
     update_all(1)
     time.sleep(600)
-
+    print(datetime.utcnow())
