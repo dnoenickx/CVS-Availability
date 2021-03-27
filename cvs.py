@@ -94,5 +94,5 @@ def update_all(delay, verbose=False):
 
 while True:
     update_all(1)
-    time.sleep(600)
+    sleep(600)
     print(datetime.utcnow())
